@@ -54,4 +54,21 @@ public class UserMapper {
         // Return the populated User object
         return user;
     }
+
+    /**
+     * Maps a User object to a UserResponse object, which is a simplified response DTO.
+     *
+     * @param user The User object to be mapped.
+     * @return A UserResponse object containing selected attributes of the User.
+     */
+    public UserResponse toUserResponse(User user) {
+        return UserResponse.builder()
+                .id(user.getId()) // Set the User's ID
+                .firstName(user.getFirstName()) // Set the User's first name
+                .lastName(user.getLastName()) // Set the User's last name
+                .email(user.getEmail()) // Set the User's email
+                .lastSeen(user.getLastSeen()) // Set the last seen time
+                .isOnline(user.isOnline()) // Set the online status
+                .build(); // Return the built UserResponse object
+    }
 }
