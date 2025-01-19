@@ -10,7 +10,7 @@ import lombok.Setter;
 
 /**
  * Represents a message within a chat.
- * Extends the BaseAuditingEntity to include auditing fields like createdDate and lastModifiedDate.
+ * This entity extends {@link BaseAuditingEntity}, which provides auditing fields like createdDate and lastModifiedDate.
  */
 @Setter
 @Getter
@@ -28,6 +28,9 @@ import lombok.Setter;
 )
 public class Message extends BaseAuditingEntity {
 
+    /**
+     * The unique identifier of the message.
+     */
     @Id // Specifies the primary key of the entity.
     @SequenceGenerator( // Configures a sequence generator for ID generation.
             name = "msg_seq",
@@ -37,22 +40,47 @@ public class Message extends BaseAuditingEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "msg_seq") // Uses a sequence strategy for ID generation.
     private String id;
 
-    @Column(columnDefinition = "TEXT") // Stores the message content as a text column in the database.
+    /**
+     * The content of the message, stored as a text column in the database.
+     */
+    @Column(columnDefinition = "TEXT")
     private String content;
 
+    /**
+     * The state of the message (e.g., sent, delivered, read).
+     */
     @Enumerated(EnumType.STRING) // Maps the MessageState enum to a string in the database.
     private MessageState state;
 
+    /**
+     * The type of the message (e.g., text, image, video).
+     */
     @Enumerated(EnumType.STRING) // Maps the MessageType enum to a string in the database.
     private MessageType type;
 
+    /**
+     * The chat to which the message belongs.
+     */
     @ManyToOne // Defines a many-to-one relationship with the Chat entity.
     @JoinColumn(name = "chat_id") // Specifies the foreign key column for the related chat.
     private Chat chat;
 
-    @Column(name = "sender_id", nullable = false) // Stores the sender's ID, which cannot be null.
+    /**
+     * The ID of the user who sent the message.
+     * This field is mandatory and cannot be null.
+     */
+    @Column(name = "sender_id", nullable = false)
     private String senderId;
 
-    @Column(name = "recipient_id", nullable = false) // Stores the recipient's ID, which cannot be null.
+    /**
+     * The ID of the user who received the message.
+     * This field is mandatory and cannot be null.
+     */
+    @Column(name = "recipient_id", nullable = false)
     private String recipientId;
+
+    /**
+     * The file path of the media associated with the message, if any.
+     */
+    private String mediaFilePath;
 }
