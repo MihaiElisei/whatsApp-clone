@@ -1,5 +1,6 @@
 package com.mihai.whatsappclone.message;
 
+import com.mihai.whatsappclone.file.FileUtils;
 import org.springframework.stereotype.Service;
 
 /**
@@ -24,6 +25,7 @@ public class MessageMapper {
                 .type(message.getType()) // Maps the type of the message (e.g., text, media).
                 .state(message.getState()) // Maps the state of the message (e.g., sent, seen).
                 .createdAt(message.getCreatedDate()) // Maps the creation timestamp.
+                .media(FileUtils.readFileFromLocation(message.getMediaFilePath())) // Reads and maps the media file content associated with the message using `FileUtils`.
                 .build(); // Constructs the MessageResponse object.
     }
 }
