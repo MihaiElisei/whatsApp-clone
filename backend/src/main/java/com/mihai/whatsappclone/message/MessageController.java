@@ -1,5 +1,7 @@
 package com.mihai.whatsappclone.message;
 
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/messages") // Base path for all message-related API endpoints.
 @RequiredArgsConstructor // Automatically generates a constructor for required fields (final fields).
+@Tag(name="Message", description="Endpoints for managing messages.")
 public class MessageController {
 
     private final MessageService messageService;
@@ -42,6 +45,7 @@ public class MessageController {
     @ResponseStatus(HttpStatus.CREATED) // Returns 201 Created on success.
     public void uploadMedia(
             @RequestParam("chat-id") String chatId,
+            @Parameter()
             @RequestParam("file") MultipartFile file,
             Authentication authentication
     ) {
