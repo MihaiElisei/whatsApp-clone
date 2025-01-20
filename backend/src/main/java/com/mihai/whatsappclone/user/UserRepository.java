@@ -33,7 +33,7 @@ public interface UserRepository extends JpaRepository<User, String> {
      * @return An Optional containing the found user, or empty if no user is found.
      */
     @Query(name = UserConstants.FIND_USER_BY_PUBLIC_ID)
-    Optional<User> findByPublicId(String publicId);
+    Optional<User> findByPublicId(@Param("publicId") String publicId);
 
     /**
      * Custom query method to find all users except the one with the specified public ID.

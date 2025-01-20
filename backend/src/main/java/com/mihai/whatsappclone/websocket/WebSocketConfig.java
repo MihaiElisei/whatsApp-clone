@@ -12,6 +12,7 @@ import org.springframework.messaging.handler.invocation.HandlerMethodArgumentRes
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.security.messaging.context.AuthenticationPrincipalArgumentResolver;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
@@ -24,7 +25,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
  * It sets up message brokers, STOMP endpoints, argument resolvers, and message converters.
  */
 @Configuration
-@EnableWebSocket
+@EnableWebSocketMessageBroker
 @Order(Ordered.HIGHEST_PRECEDENCE + 99) // Ensures this configuration is applied early
 @RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
