@@ -3,6 +3,10 @@ package com.mihai.whatsappclone.message;
 import com.mihai.whatsappclone.chat.Chat;
 import com.mihai.whatsappclone.chat.ChatRepository;
 import com.mihai.whatsappclone.file.FileService;
+import com.mihai.whatsappclone.file.FileUtils;
+import com.mihai.whatsappclone.notification.Notification;
+import com.mihai.whatsappclone.notification.NotificationService;
+import com.mihai.whatsappclone.notification.NotificationType;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -12,14 +16,19 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+/**
+ * Service class for managing messages in the application.
+ * Handles operations such as saving messages, retrieving messages, updating message states, and uploading media messages.
+ */
 @Service
-@RequiredArgsConstructor // Lombok annotation to generate a constructor with required (final) fields.
+@RequiredArgsConstructor // Lombok annotation to generate a constructor for all final fields.
 public class MessageService {
 
     private final MessageRepository messageRepository; // Repository for database operations on messages.
     private final ChatRepository chatRepository; // Repository for database operations on chats.
     private final MessageMapper mapper; // Utility to map Message entities to DTOs.
-    private final FileService fileService; // Service for handling file operations (e.g., saving media files).
+    private final FileService fileService; // Service for handling file-related operations (e.g., saving and reading files).
+    private final NotificationService notificationService; // Service for sending notifications to users.
 
     /**
      * Saves a message in the specified chat.
@@ -43,13 +52,27 @@ public class MessageService {
 
         // Save the message to the database.
         messageRepository.save(message);
+
+        // Create a notification for the recipient about the new message.
+        Notification notification = Notification.builder()
+                .chatId(chat.getId())
+                .messageType(messageRequest.getType())
+                .content(messageRequest.getContent())
+                .senderId(messageRequest.getSenderId())
+                .recipientId(messageRequest.getRecipientId())
+                .type(NotificationType.MESSAGE)
+                .chatName(chat.getChatName(message.getSenderId()))
+                .build();
+
+        // Send the notification to the recipient.
+        notificationService.sendNotification(message.getRecipientId(), notification);
     }
 
     /**
      * Retrieves all messages in a chat by chat ID.
      *
      * @param chatId The ID of the chat whose messages are to be retrieved.
-     * @return A list of MessageResponse DTOs.
+     * @return A list of MessageResponse DTOs containing the messages.
      */
     public List<MessageResponse> findChatMessages(String chatId) {
         // Fetch messages by chat ID, map them to DTOs, and return as a list.
@@ -72,10 +95,22 @@ public class MessageService {
         Chat chat = chatRepository.findById(chatId)
                 .orElseThrow(() -> new EntityNotFoundException("Chat with id " + chatId + " not found"));
 
-        //final String recipientId = getRecipientId(chat, authentication);
+        // Determine the recipient ID based on the authenticated user.
+        final String recipientId = getRecipientId(chat, authentication);
 
         // Update the state of messages in the chat to be SEEN.
         messageRepository.setMessagesToSeenByChatId(chatId, MessageState.SEEN);
+
+        // Create a notification for the sender about the messages being seen.
+        Notification notification = Notification.builder()
+                .chatId(chat.getId())
+                .type(NotificationType.SEEN)
+                .recipientId(recipientId)
+                .senderId(getSenderId(chat, authentication))
+                .build();
+
+        // Send the notification to the sender.
+        notificationService.sendNotification(recipientId, notification);
     }
 
     /**
@@ -91,7 +126,7 @@ public class MessageService {
         Chat chat = chatRepository.findById(chatId)
                 .orElseThrow(() -> new EntityNotFoundException("Chat with id " + chatId + " not found"));
 
-        // Determine the sender and recipient IDs based on the current authenticated user.
+        // Determine the sender and recipient IDs based on the authenticated user.
         final String senderId = getSenderId(chat, authentication);
         final String recipientId = getRecipientId(chat, authentication);
 
@@ -109,6 +144,19 @@ public class MessageService {
 
         // Save the media message to the database.
         messageRepository.save(message);
+
+        // Create a notification for the recipient about the new media message.
+        Notification notification = Notification.builder()
+                .chatId(chat.getId())
+                .type(NotificationType.IMAGE)
+                .messageType(MessageType.IMAGE)
+                .recipientId(recipientId)
+                .senderId(senderId)
+                .media(FileUtils.readFileFromLocation(filePath))
+                .build();
+
+        // Send the notification to the recipient.
+        notificationService.sendNotification(recipientId, notification);
     }
 
     /**
