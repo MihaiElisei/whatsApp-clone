@@ -25,6 +25,7 @@ public class ChatMapper {
                 .isRecipientOnline(c.getRecipient().isOnline()) // Whether the recipient is currently online.
                 .senderId(c.getSender().getId()) // The ID of the sender.
                 .recipientId(c.getRecipient().getId()) // The ID of the recipient.
+                .lastMessageTime(c.getLastMessageDate()) //The date of last message
                 .build();
     }
 }

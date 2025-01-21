@@ -1,20 +1,27 @@
 <div class="main">
+  <!-- A decorative green background for visual design -->
   <div class="background-green"></div>
 
   <div class="main-container d-flex">
+    <!-- Sidebar with icons for navigation and user actions -->
     <div class="d-flex flex-column justify-content-between align-items-center p-3 gray-bg">
       <div>
+        <!-- Icon for messaging functionality -->
         <i class="fa-solid fa-message cursor-pointer"></i>
       </div>
       <div class="d-flex flex-column align-content-center gap-2">
-        <i class="fa-solid fa-user cursor-pointer"></i>
-        <i class="fa-solid fa-door-open cursor-pointer"></i>
+        <!-- User profile icon with click event to navigate to the user profile -->
+        <i class="fa-solid fa-user cursor-pointer" (click)="userProfile()"></i>
+        <!-- Logout icon with click event to handle user logout -->
+        <i class="fa-solid fa-door-open cursor-pointer" (click)="logout()"></i>
       </div>
     </div>
+
     <div class="d-flex w-100">
+      <!-- Chat list container occupying one-third of the width -->
       <div class="col-3 overflow-x-scroll">
-        <app-chat-list>
-          [chats] = "chats"
+        <!-- Chat list component displaying a list of chats -->
+        <app-chat-list [chats]="chats">
         </app-chat-list>
       </div>
     </div>
