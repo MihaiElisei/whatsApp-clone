@@ -18,7 +18,7 @@ public class MessageResponse {
     /**
      * The unique identifier of the message.
      */
-    private String id;
+    private Long id;
 
     /**
      * The content of the message.

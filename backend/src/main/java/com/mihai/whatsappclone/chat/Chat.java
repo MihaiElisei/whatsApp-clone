@@ -62,6 +62,14 @@ public class Chat extends BaseAuditingEntity {
         return recipient.getFirstName() + " " + recipient.getLastName();
     }
 
+    @Transient // Indicates this method is not persisted in the database.
+    public String getTargetChatName(final String senderId) {
+        if (sender.getId().equals(senderId)) {
+            return sender.getFirstName() + " " + sender.getLastName();
+        }
+        return recipient.getFirstName() + " " + recipient.getLastName();
+    }
+
     /**
      * Calculates the number of unread messages for the sender.
      * Filters messages where the recipient is the sender and the state is 'SENT'.

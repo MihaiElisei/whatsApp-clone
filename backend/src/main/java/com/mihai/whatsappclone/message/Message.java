@@ -38,7 +38,7 @@ public class Message extends BaseAuditingEntity {
             allocationSize = 1
     )
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "msg_seq") // Uses a sequence strategy for ID generation.
-    private String id;
+    private Long id;
 
     /**
      * The content of the message, stored as a text column in the database.
